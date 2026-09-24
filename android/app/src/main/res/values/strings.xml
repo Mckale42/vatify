@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">VATIFY</string>
+    <string name="title_activity_main">VATIFY</string>
+    <string name="package_name">com.vatify.app</string>
+    <string name="custom_url_scheme">com.vatify.app</string>
+</resources>
