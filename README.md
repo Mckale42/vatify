@@ -1,6 +1,6 @@
 # VATify — Automated VAT Compliance & Document Processing Platform
 
-[![CI/CD Pipeline](https://github.com/vatify-sa/vatify/actions/workflows/ci.yml/badge.svg)](https://github.com/vatify-sa/vatify/actions)
+[![CI/CD Pipeline](https://github.com/Mckale42/vatify/actions/workflows/ci.yml/badge.svg)](https://github.com/Mckale42/vatify/actions)
 [![Production Hosted](https://img.shields.io/badge/Hosting-Live%20on%20Vatify.co.za-emerald)](https://www.vatify.co.za/dashboard)
 [![Stack](https://img.shields.io/badge/Stack-Next.js%2015%20%7C%20Supabase%20%7C%20Gemini%20AI-blue)](https://nextjs.org)
 
@@ -205,7 +205,7 @@ npm run test:watch
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-org/vatify.git
+   git clone https://github.com/Mckale42/vatify.git
    cd vatify
    ```
 
