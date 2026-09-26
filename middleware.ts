@@ -6,12 +6,7 @@ export async function middleware(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.error("[v0] Missing Supabase environment variables:", {
-      hasUrl: !!supabaseUrl,
-      hasKey: !!supabaseAnonKey,
-    })
-    // Allow request to continue without auth check if env vars are missing
+  if (process.env.VATIFY_DEMO_MODE === "true" || !supabaseUrl || !supabaseAnonKey) {
     return NextResponse.next()
   }
 
