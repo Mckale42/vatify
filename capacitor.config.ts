@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'VATIFY',
   webDir: 'public',
   server: {
-    url: 'http://10.0.2.2:3000',
+    url: 'http://10.0.2.2:3000/dashboard',
     cleartext: true,
   },
 };
