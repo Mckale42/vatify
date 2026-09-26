@@ -5,8 +5,11 @@ const config: CapacitorConfig = {
   appName: 'VATIFY',
   webDir: 'public',
   server: {
-    url: 'http://10.0.2.2:3000/dashboard',
-    cleartext: true,
+    url: 'https://vatify.co.za/dashboard',
+    androidScheme: 'https',
+    // The host redirects between apex and www on some routes; without this,
+    // Capacitor treats that redirect as leaving the app and hands it to Chrome.
+    allowNavigation: ['vatify.co.za', 'www.vatify.co.za'],
   },
 };
 
