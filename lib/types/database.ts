@@ -1,5 +1,7 @@
 // Database types for Supabase tables
 
+export type Json = string | number | boolean | null | { [key: string]: Json } | Json[]
+
 export interface UserRole {
   id: number
   user_id: string
@@ -73,8 +75,8 @@ export interface UserInvoice {
   vat_amount: number | null
   net_amount: number | null
   currency: string | null
-  line_items: any | null
-  extracted_data: any | null
+  line_items: Json[] | null
+  extracted_data: Record<string, Json> | null
   status: string | null
   processing_notes: string | null
   created_at: string | null
