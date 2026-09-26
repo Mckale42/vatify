@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { GoogleGenerativeAI } from "@google/generative-ai"
+import { GoogleGenerativeAI, type GenerativeModel, type Part } from "@google/generative-ai"
 import { checkRateLimit } from "@/lib/rate-limiter"
 
 if (!process.env.GEMINI_API_KEY) {
@@ -8,18 +8,18 @@ if (!process.env.GEMINI_API_KEY) {
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 
-async function generateContentWithRetry(model: any, content: any[], maxRetries = 3) {
+async function generateContentWithRetry(model: GenerativeModel, content: Array<string | Part>, maxRetries = 3) {
   let lastError: Error | null = null
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       const result = await model.generateContent(content)
       return result
-    } catch (error: any) {
-      lastError = error
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error))
 
       // Check if it's a 503 error (service unavailable)
-      if (error?.message?.includes("503") || error?.message?.includes("overloaded")) {
+      if (lastError.message.includes("503") || lastError.message.includes("overloaded")) {
         // Wait before retrying with exponential backoff
         const waitTime = Math.pow(2, attempt) * 1000 // 1s, 2s, 4s
         console.log(`[v0] API overloaded, retrying in ${waitTime}ms (attempt ${attempt + 1}/${maxRetries})`)
@@ -208,10 +208,11 @@ export async function POST(request: NextRequest) {
         description: jsonData.description || "No description available",
       },
     })
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error processing invoice:", error)
+    const message = error instanceof Error ? error.message : ""
 
-    if (error?.message?.includes("503") || error?.message?.includes("overloaded")) {
+    if (message.includes("503") || message.includes("overloaded")) {
       return NextResponse.json(
         {
           success: false,

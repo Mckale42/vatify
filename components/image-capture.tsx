@@ -43,12 +43,13 @@ export function ImageCapture({ onCapture, children }: ImageCaptureProps) {
         })
         setStream(mediaStream) // Set stream state first
         setCurrentFacingMode(facingModeToUse)
-      } catch (error: any) {
+      } catch (error) {
         console.error(`Error accessing ${facingModeToUse} camera:`, error)
+        const errorName = error instanceof DOMException ? error.name : ""
         let errorMessage = `Unable to access ${facingModeToUse} camera. `
-        if (error.name === "NotAllowedError") {
+        if (errorName === "NotAllowedError") {
           errorMessage += "Permission denied. Please allow camera access in your browser settings."
-        } else if (error.name === "NotFoundError" || error.name === "OverconstrainedError") {
+        } else if (errorName === "NotFoundError" || errorName === "OverconstrainedError") {
           errorMessage += `The ${facingModeToUse === "environment" ? "back" : "front"} camera may not be available or supported on this device.`
           if (!newFacingMode) {
             const alternativeMode = facingModeToUse === "environment" ? "user" : "environment"
@@ -61,7 +62,8 @@ export function ImageCapture({ onCapture, children }: ImageCaptureProps) {
             return
           }
         } else {
-          errorMessage += "Please check permissions or try a different camera. Error: " + error.message
+          const message = error instanceof Error ? error.message : String(error)
+          errorMessage += "Please check permissions or try a different camera. Error: " + message
         }
         setCameraError(errorMessage)
         setStream(null)
