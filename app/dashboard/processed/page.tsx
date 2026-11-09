@@ -205,7 +205,7 @@ export default function ProcessedPage() {
     return (
       <div>
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Processed Invoices</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Processed Invoices</h1>
         </div>
         <Card>
           <CardContent className="p-8 text-center">
@@ -220,7 +220,7 @@ export default function ProcessedPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Processed Invoices</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">Processed Invoices</h1>
         {processedInvoices.length > 0 && (
           <Button onClick={handleExportReport}>
             <Download className="mr-2 h-4 w-4" />

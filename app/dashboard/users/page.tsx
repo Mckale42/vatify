@@ -21,7 +21,7 @@ export default async function UsersPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">User Management</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-8">User Management</h1>
 
       <Card>
         <CardHeader>

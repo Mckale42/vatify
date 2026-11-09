@@ -411,7 +411,7 @@ export default function DocumentsPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-primary">Required Documents</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-primary">Required Documents</h1>
         <p className="text-gray-600 mt-2">
           Please upload the following documents to complete your profile and enable VAT claim processing. You can upload
           files or take photos directly with your camera.

@@ -101,7 +101,7 @@ export default function VatChatPage() {
 
   return (
     <div className="h-[calc(100vh-8rem)]">
-      <h1 className="text-3xl font-bold mb-8">VAT Chat Assistant</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-8">VAT Chat Assistant</h1>
 
       <Card className="h-[calc(100%-5rem)]">
         <CardHeader>

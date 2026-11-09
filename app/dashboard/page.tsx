@@ -64,7 +64,7 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
       <div>
-        <h1 className="text-3xl font-bold mb-8 text-primary">Welcome back!</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-primary">Welcome back!</h1>
         <Card>
           <CardContent className="p-8 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
@@ -77,7 +77,7 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8 text-primary">Welcome back{userName ? `, ${userName}` : ""}!</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-primary">Welcome back{userName ? `, ${userName}` : ""}!</h1>
 
       {error && (
         <Card className="border-red-500 bg-red-50 mb-6">
