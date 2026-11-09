@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai"
+import { createServerClient } from "@/lib/supabase/server"
 
 // Initialize the Gemini API
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
@@ -36,6 +37,18 @@ Important VAT facts to remember:
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createServerClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized", details: "You must be logged in to access this resource" },
+        { status: 401 },
+      )
+    }
+
     const { message } = await request.json()
 
     if (!message || typeof message !== "string") {
