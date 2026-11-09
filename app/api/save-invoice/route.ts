@@ -1,23 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase/server"
-import { checkRateLimit } from "@/lib/rate-limiter"
-import { validateInvoiceIntegrity, validateSarsInvoiceCompliance } from "@/lib/services/vat-calculator"
 
 export async function POST(request: NextRequest) {
   try {
-    const ip = request.headers.get("x-forwarded-for") || "local-client"
-    const rateLimit = checkRateLimit(`save-invoice-${ip}`, { limit: 30, windowMs: 60 * 1000 })
-    if (!rateLimit.allowed) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Too many save requests. Please try again later.",
-          code: "RATE_LIMIT_EXCEEDED",
-        },
-        { status: 429 }
-      )
-    }
-
     const supabase = await createServerClient()
 
     const {
@@ -83,31 +68,6 @@ export async function POST(request: NextRequest) {
 
     const fileUrl = urlData.publicUrl
 
-    const net = Number(extractedData.exclusiveAmount || 0)
-    const vat = Number(extractedData.vatAmount || 0)
-    const total = Number(extractedData.totalAmount || 0)
-
-    const integrityCheck = validateInvoiceIntegrity(net, vat, total)
-    const complianceCheck = validateSarsInvoiceCompliance({
-      invoiceNumber: extractedData.invoiceNumber,
-      invoiceDate: extractedData.date,
-      supplierName: extractedData.supplier,
-      supplierVatNumber: extractedData.vatNumber,
-      totalAmount: total,
-      vatAmount: vat,
-    })
-
-    const invoiceStatus = !integrityCheck.isValid ? "requires_review" : "processed"
-    const validationNotes = [
-      extractedData.notes,
-      integrityCheck.reason,
-      complianceCheck.missingRequirements.length > 0
-        ? `SARS Warning: ${complianceCheck.missingRequirements.join(", ")}`
-        : null,
-    ]
-      .filter(Boolean)
-      .join(" | ")
-
     const { data: invoice, error: dbError } = await supabase
       .from("user_invoices")
       .insert({
@@ -119,13 +79,13 @@ export async function POST(request: NextRequest) {
         invoice_date: extractedData.date,
         supplier_name: extractedData.supplier,
         supplier_vat_number: extractedData.vatNumber,
-        total_amount: total,
-        vat_amount: vat,
-        net_amount: net,
+        total_amount: extractedData.totalAmount,
+        vat_amount: extractedData.vatAmount,
+        net_amount: extractedData.exclusiveAmount,
         currency: "ZAR",
         extracted_data: extractedData,
-        status: invoiceStatus,
-        processing_notes: validationNotes || null,
+        status: "processed",
+        processing_notes: extractedData.notes || null,
       })
       .select()
       .single()

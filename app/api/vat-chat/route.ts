@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai"
-import { checkRateLimit } from "@/lib/rate-limiter"
 
 // Initialize the Gemini API
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
@@ -37,15 +36,6 @@ Important VAT facts to remember:
 
 export async function POST(request: NextRequest) {
   try {
-    const ip = request.headers.get("x-forwarded-for") || "local-client"
-    const rateLimit = checkRateLimit(`vat-chat-${ip}`, { limit: 20, windowMs: 60 * 1000 })
-    if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { error: "Too many messages. Please wait a moment before sending another." },
-        { status: 429 }
-      )
-    }
-
     const { message } = await request.json()
 
     if (!message || typeof message !== "string") {

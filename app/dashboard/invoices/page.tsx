@@ -22,7 +22,6 @@ import {
   X,
 } from "lucide-react"
 import { useState, useRef } from "react"
-import { SmartInvoiceCapture } from "@/components/smart-invoice-capture"
 
 interface ProcessedInvoice {
   id?: string
@@ -71,23 +70,6 @@ export default function InvoicesPage() {
 
   const processInvoice = async (file: File, index: number) => {
     try {
-      if (process.env.NEXT_PUBLIC_DEMO_MODE === "true") {
-        await new Promise((resolve) => setTimeout(resolve, 1100))
-        const today = new Date().toISOString().slice(0, 10)
-        const demoData = {
-          supplier: "Acme Supplies (Pty) Ltd",
-          vatNumber: "4123456789",
-          invoiceNumber: `INV-${Math.floor(10000 + Math.random() * 89999)}`,
-          date: today,
-          totalAmount: 1250,
-          vatAmount: 163.04,
-          exclusiveAmount: 1086.96,
-          description: "Office supplies and business consumables",
-        }
-        setInvoices((prev) => prev.map((inv, i) => i === index ? { ...inv, id: `demo-${Date.now()}`, status: "success" as const, data: demoData } : inv))
-        return
-      }
-
       // Step 1: Process with Gemini AI
       const formData = new FormData()
       formData.append("file", file)
@@ -345,7 +327,65 @@ export default function InvoicesPage() {
         )}
       </div>
 
-      <SmartInvoiceCapture onFiles={handleFileSelect} />
+      {/* Camera Modal */}
+      {showCamera && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Capture Invoice</h3>
+              <Button variant="ghost" size="icon" onClick={stopCamera}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <video ref={videoRef} autoPlay playsInline muted className="w-full rounded-lg mb-4 bg-black" />
+            <canvas ref={canvasRef} className="hidden" />
+            <div className="flex justify-center space-x-4">
+              <Button onClick={capturePhoto}>
+                <Camera className="mr-2 h-4 w-4" />
+                Capture Photo
+              </Button>
+              <Button variant="outline" onClick={stopCamera}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Upload Area */}
+      <Card
+        className={`mb-8 border-2 border-dashed transition-colors ${
+          isDragging ? "border-primary bg-primary/5" : "border-gray-300"
+        }`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        <CardContent className="p-12 text-center">
+          <Upload className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+          <h3 className="text-lg font-semibold mb-2">Upload Invoice Documents</h3>
+          <p className="text-sm text-gray-500 mb-4">Drag and drop your invoice files here, or click to browse</p>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,.pdf"
+            multiple
+            className="hidden"
+            onChange={(e) => handleFileSelect(e.target.files)}
+          />
+          <div className="flex justify-center space-x-4">
+            <Button onClick={() => fileInputRef.current?.click()}>
+              <Upload className="mr-2 h-4 w-4" />
+              Select Files
+            </Button>
+            <Button variant="outline" onClick={startCamera}>
+              <Camera className="mr-2 h-4 w-4" />
+              Take Photo
+            </Button>
+          </div>
+          <p className="text-xs text-gray-400 mt-4">Supported formats: PDF, JPG, PNG</p>
+        </CardContent>
+      </Card>
 
       {/* Processing Status */}
       {invoices.length > 0 && (
