@@ -1,24 +1,75 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, MessageCircle, ReceiptText, Settings2, Sparkles } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Menu } from "lucide-react"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
-const items = [
-  { title: "Home", href: "/dashboard", icon: Home },
-  { title: "Invoices", href: "/dashboard/invoices", icon: ReceiptText },
-  { title: "VAT", href: "/dashboard/processed", icon: Sparkles },
-  { title: "Chat", href: "/dashboard/vat-chat", icon: MessageCircle },
-  { title: "More", href: "/dashboard/company-details", icon: Settings2 },
+const navigationItems = [
+  { title: "Home", href: "/" },
+  { title: "Why VATIFY?", href: "/why-vatify" },
+  { title: "How It Works", href: "/how-it-works" },
+  { title: "Features", href: "/features" },
+  { title: "Pricing", href: "/pricing" },
+  { title: "FAQ", href: "/faq" },
+  { title: "About Us", href: "/about" },
+  { title: "Contact", href: "/contact" },
 ]
 
 export function MobileNav() {
+  const [open, setOpen] = useState(false)
   const pathname = usePathname()
-  return <nav className="fixed inset-x-3 bottom-3 z-40 mx-auto flex max-w-md items-center justify-around rounded-[22px] border border-slate-200/80 bg-white/90 p-1.5 shadow-[0_18px_55px_rgba(15,23,42,.18)] backdrop-blur-xl lg:hidden" aria-label="Mobile navigation">
-    {items.map(({ title, href, icon: Icon }) => {
-      const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href))
-      return <Link key={href} href={href} className={cn("relative flex min-w-14 flex-1 flex-col items-center gap-1 rounded-[17px] px-2 py-2 text-[10px] font-semibold transition", active ? "bg-[#0a2463] text-white shadow-md" : "text-slate-500 hover:bg-slate-50 hover:text-[#0a2463]")}>{active && <span className="absolute -top-1 h-1 w-5 rounded-full bg-[#8FB8DE]" />}<Icon className="h-4 w-4" /><span>{title}</span></Link>
-    })}
-  </nav>
+
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button
+          variant="ghost"
+          className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 lg:hidden"
+        >
+          <Menu className="h-6 w-6" />
+          <span className="sr-only">Toggle Menu</span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="pr-0">
+        <div className="px-7">
+          <Link href="/" className="flex items-center" onClick={() => setOpen(false)}>
+            <Image
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/VATIFY-vI6x288tscjZoB5JsphZ5PSv9Zwrgw.png"
+              alt="Vatify Logo"
+              width={120}
+              height={48}
+              className="h-8 w-auto"
+            />
+          </Link>
+        </div>
+        <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
+          <div className="flex flex-col space-y-2">
+            {navigationItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className={cn(
+                  "flex w-full items-center rounded-md p-2 text-sm font-medium hover:underline",
+                  pathname === item.href ? "text-foreground" : "text-foreground/60",
+                )}
+              >
+                {item.title}
+              </Link>
+            ))}
+          </div>
+          <div className="mt-8">
+            <Link href="/login" onClick={() => setOpen(false)}>
+              <Button className="w-full bg-[#2563EB] hover:bg-[#2563EB]/90">Login</Button>
+            </Link>
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
+  )
 }
