@@ -35,9 +35,9 @@ export function UserMenu({ user }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="flex items-center space-x-2 text-primary">
+        <Button variant="ghost" aria-label="Account menu" className="flex shrink-0 items-center gap-2 px-2 text-primary sm:px-4">
           <User className="h-5 w-5" />
-          <span>{user.email}</span>
+          <span className="hidden max-w-[220px] truncate sm:inline">{user.email}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

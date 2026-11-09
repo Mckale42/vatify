@@ -319,7 +319,7 @@ export default function InvoicesPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Upload & Process Invoices</h1>
+        <h1 className="text-2xl font-bold sm:text-3xl">Upload & Process Invoices</h1>
         {invoices.length > 0 && (
           <Button variant="outline" onClick={handleClearAll}>
             Clear All
@@ -361,7 +361,7 @@ export default function InvoicesPage() {
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <CardContent className="p-12 text-center">
+        <CardContent className="p-6 text-center sm:p-12">
           <Upload className="h-12 w-12 mx-auto mb-4 text-gray-400" />
           <h3 className="text-lg font-semibold mb-2">Upload Invoice Documents</h3>
           <p className="text-sm text-gray-500 mb-4">Drag and drop your invoice files here, or click to browse</p>
@@ -373,7 +373,7 @@ export default function InvoicesPage() {
             className="hidden"
             onChange={(e) => handleFileSelect(e.target.files)}
           />
-          <div className="flex justify-center space-x-4">
+          <div className="flex flex-wrap justify-center gap-3">
             <Button onClick={() => fileInputRef.current?.click()}>
               <Upload className="mr-2 h-4 w-4" />
               Select Files

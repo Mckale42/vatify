@@ -179,7 +179,7 @@ export default function CompanyDetailsPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-primary">Company Details</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-primary">Company Details</h1>
         <p className="text-gray-600 mt-2">
           Please provide your personal and company information to complete your profile.
         </p>
