@@ -29,6 +29,7 @@ export const metadata: Metadata = {
       type: "image/png",
     },
   },
+    generator: 'v0.app'
 }
 
 export default function RootLayout({

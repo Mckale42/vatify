@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { GoogleGenerativeAI, type GenerativeModel, type Part } from "@google/generative-ai"
-import { checkRateLimit } from "@/lib/rate-limiter"
+import { GoogleGenerativeAI } from "@google/generative-ai"
 
 if (!process.env.GEMINI_API_KEY) {
   console.error("GEMINI_API_KEY is not set in environment variables")
@@ -8,18 +7,18 @@ if (!process.env.GEMINI_API_KEY) {
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 
-async function generateContentWithRetry(model: GenerativeModel, content: Array<string | Part>, maxRetries = 3) {
+async function generateContentWithRetry(model: any, content: any[], maxRetries = 3) {
   let lastError: Error | null = null
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       const result = await model.generateContent(content)
       return result
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error(String(error))
+    } catch (error: any) {
+      lastError = error
 
       // Check if it's a 503 error (service unavailable)
-      if (lastError.message.includes("503") || lastError.message.includes("overloaded")) {
+      if (error?.message?.includes("503") || error?.message?.includes("overloaded")) {
         // Wait before retrying with exponential backoff
         const waitTime = Math.pow(2, attempt) * 1000 // 1s, 2s, 4s
         console.log(`[v0] API overloaded, retrying in ${waitTime}ms (attempt ${attempt + 1}/${maxRetries})`)
@@ -38,26 +37,6 @@ async function generateContentWithRetry(model: GenerativeModel, content: Array<s
 
 export async function POST(request: NextRequest) {
   try {
-    const ip = request.headers.get("x-forwarded-for") || "local-client"
-    const rateLimit = checkRateLimit(`process-invoice-${ip}`, { limit: 10, windowMs: 60 * 1000 })
-    if (!rateLimit.allowed) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Too many requests. Please try again in 1 minute.",
-          code: "RATE_LIMIT_EXCEEDED",
-        },
-        {
-          status: 429,
-          headers: {
-            "Retry-After": "60",
-            "X-RateLimit-Limit": String(rateLimit.limit),
-            "X-RateLimit-Remaining": "0",
-          },
-        }
-      )
-    }
-
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json(
         {
@@ -208,11 +187,10 @@ export async function POST(request: NextRequest) {
         description: jsonData.description || "No description available",
       },
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error processing invoice:", error)
-    const message = error instanceof Error ? error.message : ""
 
-    if (message.includes("503") || message.includes("overloaded")) {
+    if (error?.message?.includes("503") || error?.message?.includes("overloaded")) {
       return NextResponse.json(
         {
           success: false,

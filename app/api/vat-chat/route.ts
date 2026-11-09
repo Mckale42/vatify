@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai"
-import { checkRateLimit } from "@/lib/rate-limiter"
+import { createServerClient } from "@/lib/supabase/server"
 
 // Initialize the Gemini API
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
@@ -37,12 +37,15 @@ Important VAT facts to remember:
 
 export async function POST(request: NextRequest) {
   try {
-    const ip = request.headers.get("x-forwarded-for") || "local-client"
-    const rateLimit = checkRateLimit(`vat-chat-${ip}`, { limit: 20, windowMs: 60 * 1000 })
-    if (!rateLimit.allowed) {
+    const supabase = await createServerClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
       return NextResponse.json(
-        { error: "Too many messages. Please wait a moment before sending another." },
-        { status: 429 }
+        { success: false, error: "Unauthorized", details: "You must be logged in to access this resource" },
+        { status: 401 },
       )
     }
 

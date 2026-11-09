@@ -94,31 +94,6 @@ export async function saveCompanyDetails(data: {
 }
 
 export async function getCompanyDetails() {
-  if (process.env.VATIFY_DEMO_MODE === "true") {
-    return {
-      success: true,
-      data: {
-        id: 0,
-        user_id: "demo-user",
-        contact_name: "Thando M.",
-        contact_details: "Demo account",
-        company_name: "VATify Demo Business",
-        company_registration_number: "2024/000000/07",
-        industry: "Professional Services",
-        address: "Johannesburg, Gauteng",
-        id_number: "0000000000000",
-        citizenship: "South African",
-        company_tax_number: "0000000000",
-        email_address: "demo@vatify.app",
-        mobile: "+27 00 000 0000",
-        efiling_login_details: null,
-        e_sign: false,
-        created_at: new Date(0).toISOString(),
-        updated_at: new Date(0).toISOString(),
-      } as UserOnboarding,
-    }
-  }
-
   try {
     const supabase = await createServerClient()
 
